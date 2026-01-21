@@ -1,11 +1,3 @@
-//
-//  main.cpp
-//  Assembly Project 2
-//
-//  Created by SEIF on 5/13/17.
-//  Copyright © 2017 SEIF. All rights reserved.
-//
-
 #include <iostream>
 #include <string>
 #include <vector>

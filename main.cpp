@@ -69,7 +69,7 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
     int shift_offset=log2(block_size);
     bool detected=false;
     bool misses_flag=true;
-    
+
     if (cache_type==0)    // Direct Mapped Cache
     {
         if (cache[0][index_addr]==tag_addr)
@@ -84,7 +84,7 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
                     if (cache[1][i]!=1)
                     {   misses_flag=false; // It is not a capacity miss.
                         i=number_of_blocks;}
-                    
+
                 }
                 if (misses_flag)
                     capacity_misses++;   // It is a capacity miss because the cache is full
@@ -101,7 +101,7 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
                 return 0;
             }
     } // End of direct mapped cache
-    
+
     else if (cache_type==1)   // Set associative cache
     {
         index_addr=index_addr * type;
@@ -122,18 +122,18 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
                 return 0;
             }
         }
-        
+
         //If no slot is empty, then assign any random slot and evict the previous one.
         int x=rand()%(type);
         cache[0][index_addr+x]=tag_addr;
         cache[1][index_addr+x]=1;
         capacity_misses++;
         return 0;
-        
+
     }//End of Set Associative Cache
 
-    
-    
+
+
     else if (cache_type==2)        // Fully associative cache
     {
         if (type==0)    // LRU(Least Recently Used) Policy
@@ -179,7 +179,7 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
                 return false; // MISS
             }
         }   // end of LRU Policy
-        
+
         else if (type==1)   // LFU Policy
         {
             if (block_counter < number_of_blocks) // There are some empty blocks in cache
@@ -222,7 +222,7 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
             }
 
         }  // end if LFU
-        
+
         else if (type==2) // FIFO
         {
             if (block_counter < number_of_blocks) // There are some empty blocks in cache
@@ -235,7 +235,7 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
                         return true; // Hit
                     }
                 }
-                
+
                     cache[0][block_counter]=addr>>shift_offset;
                     cache[1][block_counter]=block_counter;
                     compulsory_misses++;
@@ -250,7 +250,7 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
                         return true; // Hit. Timestamp is not updated here.
                     }
                 }
-                
+
                     int compare=0;
                     for (int i=1; i < number_of_blocks; i++)
                     {
@@ -275,11 +275,10 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
                         return true; // Hit
                     }
                 }
-                
+
                     cache[0][block_counter]=addr>>shift_offset;
                     compulsory_misses++;
                     return false;  // Miss
-                }
             }
             else  // block counter is more than block size
             {
@@ -298,12 +297,11 @@ bool cacheSim(unsigned int addr, int cache[3][100000], int type, int &block_coun
     }  // End of Fully associative Mapping
     return true;
 }
-
-char *msg[2] = {"Miss","Hit"};
+const char *msg[2] = {"Miss","Hit"};
 
 int main(int argc, const char * argv[]) {
     srand(time(NULL)); // Provide seed for rand() function.
-    
+
     int looper=1000000, addr, flag, shift;
 
     cout << "Please enter 0 for Direct mapped, 1 for Set Associative, 2 for Fully Associative: " << endl;
@@ -312,22 +310,22 @@ int main(int argc, const char * argv[]) {
     cin >> block_size;
     cout << "Please enter cache size: 1KB – 64KB; in steps that are powers of 2: " << endl;
     cin >> cache_size;
-    
-    
+
+
 
     int cache[3][100000];
     int block_counter=0;
     int hit_counter=0;
     int index_addr=0, tag_addr=0;
-    
+
     if ( cache_type==0)   //Direct Mapped Cache
     {
         number_of_blocks= (cache_size*1024)/block_size;
-        
+
         for (int i=0; i < 2; i++)   // Setting all the cache with -1 (Empty)
             for (int j=0; j < number_of_blocks; j++)
                 cache[i][j]=-1;
-        
+
         for(int i=0; i <looper ;i++)
         {
             addr = memGen1(); // Sequential Memory address generation (Good for spatial locality)
@@ -349,14 +347,14 @@ int main(int argc, const char * argv[]) {
     {
         int replacment_type;
         number_of_blocks= (cache_size*1024)/block_size;
-        
+
         cout << "Please enter the type of replacement policy for the Fully Associative Mapping: LRU->0 , LFU->1, FIFO->2, RANDOM->3: " << endl;
         cin >> replacment_type;
-        
+
         for (int i=0; i < 2; i++)   // Setting all the cache with -1 (Empty)
             for (int j=0; j < number_of_blocks; j++)
                 cache[i][j]=-1;
-        
+
         for(int i=0; i <looper ;i++)
         {
             addr = memGen4(); // 0-1 KB sequentially
@@ -368,9 +366,9 @@ int main(int argc, const char * argv[]) {
             }
             block_counter++;
         }
-        
-        cout << "Hits: " << hit_counter<<endl << "Compulsory: " << compulsory_misses <<endl<< "Capacity: " << capacity_misses <<endl<< "Conflict: " << conflict_misses <<  endl;
-        
+
+        cout << "Hits: " << hit_counter<<endl << "Compulsory: " << compulsory_misses <<endl<< "Capacity: " << capacity_misses <<endl<< "Conflict: " << conflict_misses <<endl;
+
     } // End of Fully Associative Mapping
 
     else if (cache_type==1) // Set Associative Mapping
@@ -379,11 +377,11 @@ int main(int argc, const char * argv[]) {
         cout << "Please enter the number of ways for the set associative cache(2,4,8,16): " << endl;
         cin >> number_of_ways;
         number_of_blocks= (cache_size*1024)/(block_size*number_of_ways); // Actually no. of sets in case of SAM.
-        
+
         for (int i=0; i < 3; i++)   // setting all the cache with -1
             for (int j=0; j < 100000; j++)
                 cache[i][j]=-1;
-        
+
         for(int i=0; i <looper ;i++)
         {
             addr = memGen5(); // 0-64 KB sequentially
@@ -399,8 +397,8 @@ int main(int argc, const char * argv[]) {
             }
             block_counter++;
         }
-        
-        cout << "Hits: " << hit_counter<<endl << "Compulsory: " << compulsory_misses <<endl<< "Capacity: " << capacity_misses <<endl<< "Conflict: " << conflict_misses <<  endl;
+
+        cout << "Hits: " << hit_counter<<endl << "Compulsory: " << compulsory_misses <<endl<< "Capacity: " << capacity_misses <<endl<< "Conflict: " << conflict_misses <<endl;
     }
-  
+
 }
